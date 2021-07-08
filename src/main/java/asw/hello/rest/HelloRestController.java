@@ -1,6 +1,6 @@
-package asw.rest.hello.rest;
+package asw.hello.rest;
 
-import asw.rest.hello.domain.HelloService;
+import asw.hello.domain.HelloService;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +22,15 @@ public class HelloRestController {
 	public String hello() {
 		String greeting = helloService.hello(); 
 		logger.info("Hello.hello(): " + greeting);
+		return greeting; 
+	}
+
+    /* Restituisce un saluto a "name"
+     * acceduta come GET /hello/{name} */
+	@GetMapping("/hello/{name}")
+	public String sayHello(@PathVariable String name) {
+		String greeting = helloService.hello(name); 
+		logger.info("Hello.hello(" + name + "): " + greeting);
 		return greeting; 
 	}
 
