@@ -4,7 +4,7 @@
 
 FROM openjdk:11-jdk 
 
-ADD hello.jar hello.jar
+ADD ../hello/hello.jar hello.jar
 
 EXPOSE 8080
 
