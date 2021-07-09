@@ -1,27 +1,87 @@
-# Hello (codice sorgente)
+# Esperimenti con GoCD 
 
-Questo sottoprogetto contiene il codice per una semplice applicazione web Spring Boot da eseguire su Kubernetes. 
+Per la configurazione, vedi gli script di installazione. 
 
-In particolare, questo sottoprogetto contiene solo il codice sorgente e di configurazione, i file di configurazione Docker e gli script per la costruzione delle immagini Docker e per effettuare il push della immagini Docker su Docker Hub. 
-Tuttavia, questo sottoprogetto non contiene i file di specifica per il rilascio su Kubernetes (presenti in sottoprogetti successivi). 
+In breve, i task vengono eseguiti sugli agenti, in cui deve essere installato il software di sviluppo necessario (e.g., Jave e Gradle). 
+Il PATH usato dall'agente deve essere però configurato appositamente. 
 
-## Build Java - OPZIONALE 
+I plugin di interesse devono essere configurati nel server. 
 
-Per la costruzione dell'applicazione, eseguire il comando `gradle assemble` oppure `gradle build`
+## Concetti di GoCD 
 
-## Build (Docker) - OPZIONALE 
+Vedi https://docs.gocd.org/current/introduction/concepts_in_go.html 
 
-*Questo passo è necessario solo se si vogliono utilizzare delle immagini Docker diverse da quelle predisposte dal docente del corso.*
+Task: 
+Un'azione da eseguire. 
+Di solito è un singolo comando. 
 
-Per la costruzione delle immagini Docker ed effettuare il push su Docker Hub: 
+Job: 
+Una sequenza di task. 
+I cambiamenti effettuati da un task nel filesystem sono visibili ai task successivi. 
 
-* accedere a Docker Hub, eseguendo il comando `docker login` (è necessaria la registrazione a Docker Hub)
+Stage: 
+Un gruppo di job, che vengono eseguiti ognuno indipendentemente dagli altri, in parallelo. 
 
-* modificare il file `build-and-push-docker-image.sh` (e i file Kubernetes nei sottoprogetti successivi), usando il nome del proprio account su Docker Hub al posto di **aswroma3** 
+Pipeline: 
+Una sequenza di stage. 
 
-* eseguire lo script `build-and-push-docker-image.sh` 
+Material: 
+Il motivo per eseguire una pipeline. 
+Di solito è codice sorgente. 
 
-## Ambiente di esecuzione 
+Dependency: 
+L'esito di uno stage può essere usato come material per un'altra pipeline. 
 
-Queste attività possono essere eseguite nell'ambiente [kube-cluster](../../environments/kube-cluster/), sul nodo **dev**. 
+Value Stream Map: 
+Una deployment pipeline complessiva (può comprendere molte pipeline). 
+
+Artifact: 
+Ogni job può pubblicare uno o più artifact (file o folder). 
+
+
+## Esperimenti 
+
+### Semplice pipeline 
+
+Una sola pipeline 
+- Un solo stage 
+  - Un solo job 
+    - Un solo task (di tipo Script Executor)  
+
+### Altra semplice pipeline 
+
+Una sola pipeline 
+- Un solo stage 
+  - Un solo job 
+    - Un task assemble (di tipo Script Executor)  
+    - Un task test (di tipo Script Executor)  
+
+Osservazioni: 
+Il secondo task vede l'esito del primo (e.g., il file jar) e non ripete la compilazione. 
+
+### Due job 
+
+Una sola pipeline 
+- Un solo stage 
+  - Un job di assemble 
+    - Un task assemble (di tipo Script Executor)  
+  - Un job di test 
+    - Un task test (di tipo Script Executor)  
+
+Osservazioni: 
+Non ha molto senso, perché i job di uno stage vengono eseguiti in parallelo. 
+Infatti, il task di test ripete la compilazione. 
+
+### Due stage 
+
+Una sola pipeline 
+- Un stage di assemble
+  - Un solo job di assemble 
+    - Un task assemble (di tipo Script Executor)  
+- Un stage di test
+  - Un job di test 
+    - Un task test (di tipo Script Executor)  
+
+Osservazioni: 
+In questo caso ha poco senso, perché il task di test ripete la compilazione. 
 
