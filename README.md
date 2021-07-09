@@ -85,3 +85,12 @@ Una sola pipeline
 Osservazioni: 
 In questo caso ha poco senso, perché il task di test ripete la compilazione. 
 
+### Separazione di main e test unitari 
+
+Con Spring Boot, il file jar per un progetto include i file compilati non come elementi di primo livello, 
+ma all'interno della cartella BOOT-INF/classes. 
+
+La conseguenza è che non posso eseguire test unitari avendo a disposizione solo il jar ma non il codice. 
+
+Posso però provare ad avere test di integrazione separati. 
+
