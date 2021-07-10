@@ -1,0 +1,47 @@
+buildscript {
+	ext {
+		springBootVersion = '2.4.4'
+		springDependencyManagementVersion = '1.0.11.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+// plugins {
+// 	id 'org.springframework.boot' 
+// 	id 'io.spring.dependency-management' 
+// 	id 'java'
+// }
+
+group = 'asw.hello.test'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+//	implementation 'org.springframework.boot:spring-boot-starter-webflux' 
+
+	testImplementation 'io.rest-assured:rest-assured:4.4.0'
+	testImplementation 'io.rest-assured:rest-assured-all:4.4.0'
+	testImplementation 'org.codehaus.groovy:groovy:3.0.8'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	// testImplementation 'org.codehaus.groovy:groovy-all:3.0.4'
+	// testImplementation 'org.eclipse.jetty:jetty-webapp:9.4.34.v20201102'
+	// testImplementation 'io.rest-assured:json-path:4.4.0'
+}
+
+test {
+	useJUnitPlatform()
+}

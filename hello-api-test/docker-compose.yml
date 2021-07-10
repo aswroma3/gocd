@@ -1,0 +1,8 @@
+version: "3.8"
+services:
+  hello:
+    build: .
+    image: aswroma3/hello:2021-gocd 
+    ports:
+      - "8080:8080"
+
