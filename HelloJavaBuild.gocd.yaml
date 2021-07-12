@@ -1,0 +1,50 @@
+format_version: 10
+pipelines:
+  HelloJavaBuild:
+    group: helloGroup
+    label_template: ${COUNT}
+    lock_behavior: none
+    display_order: -1
+    materials:
+      git-97fe9d4:
+        git: https://github.com/aswroma3/gocd.git
+        shallow_clone: false
+        auto_update: true
+        branch: main
+    stages:
+    - GradleBuild:
+        fetch_materials: true
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          Build:
+            timeout: 0
+            artifacts:
+            - build:
+                source: hello/build/libs/*
+                destination: hello-libs
+            tasks:
+            - plugin:
+                configuration:
+                  id: script-executor
+                  version: 0.3.0
+                options:
+                  script: |-
+                    cd hello
+                    gradle assemble
+                    ls -la build/libs
+                  shtype: bash
+                run_if: passed
+            - plugin:
+                configuration:
+                  id: script-executor
+                  version: 0.3.0
+                options:
+                  script: |-
+                    cd hello
+                    gradle test
+                  shtype: bash
+                run_if: passed

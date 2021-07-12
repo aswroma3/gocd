@@ -1,0 +1,63 @@
+format_version: 10
+pipelines:
+  HelloDocker:
+    group: helloGroup
+    label_template: ${COUNT}
+    lock_behavior: none
+    display_order: -1
+    materials:
+      git-b9b58f0:
+        git: https://github.com/aswroma3/gocd.git
+        shallow_clone: false
+        auto_update: true
+        branch: main
+      HelloJavaBuild:
+        ignore_for_scheduling: false
+        pipeline: HelloJavaBuild
+        stage: GradleBuild
+      HelloApiTest:
+        ignore_for_scheduling: false
+        pipeline: HelloApiTest
+        stage: ApiTest
+    stages:
+    - DockerBuild:
+        fetch_materials: true
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          Build:
+            timeout: 0
+            tasks:
+            - fetch:
+                is_file: false
+                source: hello-libs
+                destination: hello-docker/tmp
+                pipeline: HelloJavaBuild
+                stage: GradleBuild
+                job: Build
+                artifact_origin: gocd
+                run_if: passed
+            - plugin:
+                configuration:
+                  id: script-executor
+                  version: 0.3.0
+                options:
+                  script: "cd hello-docker \nmv tmp/hello-libs/hello.jar hello.jar\n\
+                    ls -la \ndocker build --rm -t hello-123 . \ndocker image ls"
+                  shtype: bash
+                run_if: passed
+            - plugin:
+                configuration:
+                  id: script-executor
+                  version: 0.3.0
+                options:
+                  script: "cd hello-api-test\nls -la\ndocker image ls \ndocker run\
+                    \ -d -p 8081:8080 --name my-hello-123 hello-123 \nchmod a+x smoke-test.sh\n\
+                    ./smoke-test.sh http://localhost:8081/actuator/health 180\nHELLO_API_PORT=8081\
+                    \ gradle test\nsleep 5\ndocker ps -a \ndocker stop my-hello-123\
+                    \ \ndocker rm my-hello-123 \ndocker ps -a"
+                  shtype: bash
+                run_if: passed
