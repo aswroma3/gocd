@@ -37,7 +37,7 @@ Una deployment pipeline complessiva (può comprendere molte pipeline).
 
 Artifact: 
 Ogni job può pubblicare uno o più artifact (file o folder). 
-Per esempio, un job può pubblicare l'artifact hello/build/libs/\* in hello-libs (potrebbe essere un solo file hello.jar). 
+Per esempio, un job può pubblicare l'artifact hello/build/libs/* in hello-libs (potrebbe essere un solo file hello.jar). 
 Un altro job può fare una fetch da hello-libs in hello-api-test/tmp. 
 In questo job, trovo i file in hello-api-test/tmp/hello-libs. 
 
@@ -112,7 +112,7 @@ Una sola pipeline
 - Uno stage di assemble e test 
   - Un job di assemble 
     - Un task assemble (di tipo Script Executor)  
-    - Il job pubblica l'artifact hello/build/libs/\* in hello-libs 
+    - Il job pubblica l'artifact hello/build/libs/* in hello-libs 
   - Un job di test 
     - Un task test (di tipo Script Executor)  
 - Un stage di API test
@@ -139,7 +139,7 @@ Una pipeline di Java Build
   - Un job di build 
     - Un task assemble (di tipo Script Executor)  
     - Un task test (di tipo Script Executor) 
-    - Il job pubblica l'artifact hello/build/libs/\* in hello-libs 
+    - Il job pubblica l'artifact hello/build/libs/* in hello-libs 
 Una pipeline di API Test 
 - Dipende dal repo Git  
 - Dipende dalla pipeline Java Build 
@@ -155,8 +155,6 @@ Vedi https://stackoverflow.com/questions/60503946/run-a-docker-container-with-go
 Per eseguire docker nell'agent bisogna eseguire: 
 - sudo usermod -a -G docker go (aggiunge l'utente go al gruppo docker, una volta per tutte) 
 - oppure sudo chmod 666 /var/run/docker.sock (credo ad ogni esecuzione) 
-
-C'è ancora un problema residuo con Docker (ma l'altra volta aveva funzionato) 
 
 Alle precedenti pipeline, ne aggiungiamo un'altra 
 
@@ -176,7 +174,7 @@ La possibilità di eseguire comandi Docker nell'agente suggerisce che sia possib
 - rilasciare immagini Docker in un repository esterno alla pipeline 
 - eseguire container Docker in un host remoto rispetto all'agente 
 - in modo analogo, rilasciare applicazioni Kubernetes complesse in un cluster remoto rispetto all'agente 
-  (bisogna configurare l'agente per l'utilizzo di kubectl) 
+  (bisogna configurare l'agente per l'utilizzo di kubectl, ma non l'ho sperimentato) 
 
 ### Pipeline as a code 
 
