@@ -42,6 +42,24 @@ Un altro job può fare una fetch da hello-libs in hello-api-test/tmp.
 In questo job, trovo i file in hello-api-test/tmp/hello-libs. 
 
 
+## Installazione 
+
+### Installazione su un nodo 
+
+Un solo nodo per il go-server e il go-agent. 
+Funziona senza particolari problemi. 
+
+### Installazione su due nodi  
+
+Nodi separati per il go-server e il go-agent. 
+
+Dopo un po' di fatica, finalmente funziona. 
+- il server, dopo essere partito, deve condividere la chiave per l'autoregistrazione 
+- l'agente deve essere configurato come segue: 
+  - specificare la locazione del server 
+  - specificare la chiave di autoregistrazione 
+
+
 ## Esperimenti 
 
 ### Semplice pipeline 
@@ -121,3 +139,24 @@ Vedi https://stackoverflow.com/questions/60503946/run-a-docker-container-with-go
 Per eseguire docker nell'agent bisogna eseguire: 
 - sudo usermod -a -G docker go (aggiunge l'utente go al gruppo docker, una volta per tutte) 
 - oppure sudo chmod 666 /var/run/docker.sock (credo ad ogni esecuzione) 
+
+Alle precedenti pipeline, ne aggiungiamo un'altra 
+
+Una pipeline di Docker Build 
+- Dipende dal repo Git  
+- Dipende dalla pipeline Java Build 
+- Dipende dalla pipeline di API Test 
+- Un stage di Docker build
+  - Un job di Docker build 
+    - Un task di fetch - da hello-libs a hello-docker/tmp 
+    - Un task di Docker build (di tipo Script Executor)  
+    - Un task di API test (di tipo Script Executor) 
+	  Questo task usa lo stesso test utilizzato in precedenza, 
+	  ma con l'applicazione che viene eseguita in un container Docker
+
+La possibilità di eseguire comandi Docker nell'agente suggerisce che sia possibile anche: 
+- rilasciare immagini Docker in un repository esterno alla pipeline 
+- eseguire container Docker in un host remoto rispetto all'agente 
+- in modo analogo, rilasciare applicazioni Kubernetes complesse in un cluster remoto rispetto all'agente 
+  (bisogna configurare l'agente per l'utilizzo di kubectl) 
+
