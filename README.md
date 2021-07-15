@@ -140,6 +140,8 @@ Per eseguire docker nell'agent bisogna eseguire:
 - sudo usermod -a -G docker go (aggiunge l'utente go al gruppo docker, una volta per tutte) 
 - oppure sudo chmod 666 /var/run/docker.sock (credo ad ogni esecuzione) 
 
+C'è ancora un problema residuo con Docker (ma l'altra volta aveva funzionato) 
+
 Alle precedenti pipeline, ne aggiungiamo un'altra 
 
 Una pipeline di Docker Build 
@@ -160,3 +162,12 @@ La possibilità di eseguire comandi Docker nell'agente suggerisce che sia possib
 - in modo analogo, rilasciare applicazioni Kubernetes complesse in un cluster remoto rispetto all'agente 
   (bisogna configurare l'agente per l'utilizzo di kubectl) 
 
+### Pipeline as a code 
+
+Vedi https://docs.gocd.org/current/advanced_usage/pipelines_as_code.html 
+
+Admin -> Config Repositories -> Add... 
+
+Git Repository 
+File pattern: pipelines/*.gocd.yaml 
+Rules: Add: Allow All * 

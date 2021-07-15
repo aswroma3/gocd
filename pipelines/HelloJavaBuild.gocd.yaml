@@ -48,3 +48,41 @@ pipelines:
                     gradle test
                   shtype: bash
                 run_if: passed
+    - LocalApiTest:
+        fetch_materials: true
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          ApiTest:
+            timeout: 0
+            tasks:
+            - fetch:
+                is_file: false
+                source: hello-libs
+                destination: hello-api-test/tmp
+                pipeline: HelloJavaBuild
+                stage: GradleBuild
+                job: Build
+                artifact_origin: gocd
+                run_if: passed
+            - plugin:
+                configuration:
+                  id: script-executor
+                  version: 0.3.0
+                options:
+                  script: |-
+                    cd hello-api-test
+                    ls -la
+                    ls -la tmp/hello-libs
+                    mv tmp/hello-libs/hello.jar hello-123.jar
+                    SERVER_PORT=8081 java -jar hello-123.jar &
+                    chmod a+x smoke-test.sh
+                    ./smoke-test.sh http://localhost:8081/actuator/health 180
+                    HELLO_API_PORT=8081 gradle test
+                    sleep 5
+                    pkill -f 'hello-123.jar'
+                  shtype: bash
+                run_if: passed

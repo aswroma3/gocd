@@ -45,8 +45,12 @@ pipelines:
                   id: script-executor
                   version: 0.3.0
                 options:
-                  script: "cd hello-docker \nmv tmp/hello-libs/hello.jar hello.jar\n\
-                    ls -la \ndocker build --rm -t hello-123 . \ndocker image ls"
+                  script: |-
+                    cd hello-docker
+                    mv tmp/hello-libs/hello.jar hello.jar
+                    ls -la
+                    docker build --rm -t hello-123 .
+                    ndocker image ls
                   shtype: bash
                 run_if: passed
             - plugin:
@@ -54,10 +58,17 @@ pipelines:
                   id: script-executor
                   version: 0.3.0
                 options:
-                  script: "cd hello-api-test\nls -la\ndocker image ls \ndocker run\
-                    \ -d -p 8081:8080 --name my-hello-123 hello-123 \nchmod a+x smoke-test.sh\n\
-                    ./smoke-test.sh http://localhost:8081/actuator/health 180\nHELLO_API_PORT=8081\
-                    \ gradle test\nsleep 5\ndocker ps -a \ndocker stop my-hello-123\
-                    \ \ndocker rm my-hello-123 \ndocker ps -a"
+                  script: |-
+                    cd hello-api-test
+                    ls -la
+                    docker image ls
+                    docker run -d -p 8081:8080 --name my-hello-123 hello-123
+                    nchmod a+x smoke-test.sh
+                    ./smoke-test.sh http://localhost:8081/actuator/health 180
+                    HELLO_API_PORT=8081 gradle test
+                    sleep 5\ndocker ps -a
+                    docker stop my-hello-123
+                    docker rm my-hello-123
+                    ndocker ps -a
                   shtype: bash
                 run_if: passed
