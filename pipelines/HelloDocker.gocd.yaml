@@ -50,7 +50,7 @@ pipelines:
                     mv tmp/hello-libs/hello.jar hello.jar
                     ls -la
                     docker build --rm -t hello-123 .
-                    ndocker image ls
+                    docker image ls
                   shtype: bash
                 run_if: passed
             - plugin:
@@ -63,12 +63,12 @@ pipelines:
                     ls -la
                     docker image ls
                     docker run -d -p 8081:8080 --name my-hello-123 hello-123
-                    nchmod a+x smoke-test.sh
+                    chmod a+x smoke-test.sh
                     ./smoke-test.sh http://localhost:8081/actuator/health 180
                     HELLO_API_PORT=8081 gradle test
                     sleep 5\ndocker ps -a
                     docker stop my-hello-123
                     docker rm my-hello-123
-                    ndocker ps -a
+                    docker ps -a
                   shtype: bash
                 run_if: passed

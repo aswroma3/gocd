@@ -106,6 +106,22 @@ Una sola pipeline
 Osservazioni: 
 In questo caso ha poco senso, perché il task di test ripete la compilazione. 
 
+### Una pipeline, due stage 
+
+Una sola pipeline 
+- Uno stage di assemble e test 
+  - Un job di assemble 
+    - Un task assemble (di tipo Script Executor)  
+    - Il job pubblica l'artifact hello/build/libs/\* in hello-libs 
+  - Un job di test 
+    - Un task test (di tipo Script Executor)  
+- Un stage di API test
+  - Un job di API test 
+    - Un task di fetch - da hello-libs a hello-api-test/tmp 
+    - Un task di API test (di tipo Script Executor)  
+
+Questo è invece più sensato 
+
 ### Separazione di main e test unitari 
 
 Con Spring Boot, il file jar per un progetto include i file compilati non come elementi di primo livello, 
